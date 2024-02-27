@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"net/url"
 	"os"
 
 	"github.com/spf13/viper"
 	"github.com/traceltrc/pdrive-go-client/internal/shared"
 	"github.com/traceltrc/pdrive-go-client/internal/shared/utils"
+	"github.com/vbauerster/mpb/v8"
 )
 
 const SPLIT_SIZE = 50 * 1000 * 1000 //50 MB
@@ -32,10 +34,13 @@ func main() {
     utils.ErrorExit("Unable to get filesize: %v", err)
   }
 
+  progress := mpb.New()
+
   size := stat.Size()
   if size > SPLIT_SIZE {
     panic("unimplemented") 
   } else {
-    shared.UploadSingle(pathfile, api_url, token)
+    file_url := shared.UploadSingle(pathfile, api_url, token, progress, size)
+    fmt.Println(file_url)
   }
 }
